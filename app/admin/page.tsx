@@ -1,26 +1,43 @@
 "use client";
+
 import { useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
+// Pastikan path import ini sesuai dengan struktur folder kamu
 import { useCampaigns } from "@/context/Campaigncontext"; 
 import { CheckCircle, XCircle, ShieldAlert, FileText, DollarSign, Users, Settings, Lock, Unlock, Search } from "lucide-react";
+
+// PENTING: Untuk mengatasi error "prerender" di Vercel
 export const dynamic = 'force-dynamic';
+
 export default function AdminDashboard() {
   const { user, authenticated } = usePrivy();
-  // Ambil semua fungsi baru dari Context
-  const { campaigns, users, minBurnAmount, approveCampaign, rejectCampaign, suspendUser, unsuspendUser, updateBurnAmount } = useCampaigns(); 
+  
+  // Ambil semua fungsi dari Context (Otak Global)
+  // Pastikan nama-nama fungsi ini sesuai dengan yang ada di CampaignContext.tsx kamu
+  const { 
+    campaigns, 
+    users, 
+    minBurnAmount, 
+    approveCampaign, 
+    rejectCampaign, 
+    suspendUser, 
+    unsuspendUser, 
+    updateBurnAmount 
+  } = useCampaigns(); 
   
   const [activeTab, setActiveTab] = useState("campaigns");
-  const [burnInput, setBurnInput] = useState(minBurnAmount.toString());
+  const [burnInput, setBurnInput] = useState(minBurnAmount ? minBurnAmount.toString() : "0");
 
-  // Filter Data
-  const pendingCampaigns = campaigns.filter(c => c.status === 'pending');
+  // Filter Data: Hanya ambil kampanye yang statusnya 'pending'
+  const pendingCampaigns = campaigns ? campaigns.filter(c => c.status === 'pending') : [];
   
-  // Dummy Milestones (Karena milestone biasanya data dinamis per kampanye, kita hardcode dulu utk demo)
+  // Dummy Milestones (Data sementara untuk demo Disbursement)
   const [pendingMilestones, setPendingMilestones] = useState([
     { id: 101, campaign: "Clean Water Village", step: "Termin 1", amount: "5,000 USDC", proof: "https://via.placeholder.com/150", status: "Waiting Admin" },
   ]);
 
-  // --- HANDLERS ---
+  // --- HANDLERS (Fungsi Penanganan Tombol) ---
+
   const handleCampaignAction = (id: number, action: "approve" | "reject") => {
     if (confirm(`Yakin mau ${action} kampanye ini?`)) {
       action === "approve" ? approveCampaign(id) : rejectCampaign(id);
@@ -34,7 +51,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Handler User Suspend (Sesuai Kontrak C.2.b - Harus ketik alasan)
+  // Handler User Suspend (Wajib isi alasan sesuai kontrak)
   const handleSuspend = (wallet: string) => {
     const reason = prompt("Masukkan alasan suspend user ini (Wajib):");
     if (reason) {
@@ -48,7 +65,14 @@ export default function AdminDashboard() {
     alert(`Setting disimpan! Minimum Burn sekarang: ${burnInput} $AMAL`);
   };
 
-  if (!authenticated) return <div className="p-10 text-center font-bold text-red-500">⛔ AKSES DITOLAK</div>;
+  // Proteksi Halaman: Jika belum login, tolak akses
+  if (!authenticated) return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <ShieldAlert size={64} className="text-red-500 mb-4" />
+        <h1 className="text-2xl font-bold text-gray-800">AKSES DITOLAK</h1>
+        <p className="text-gray-500">Silakan login terlebih dahulu untuk mengakses panel ini.</p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 pb-20">
@@ -60,7 +84,7 @@ export default function AdminDashboard() {
             <ShieldAlert /> ADMIN PANEL
           </div>
           <div className="text-xs text-gray-400">
-             Log: {user?.email?.address || "Admin"}
+             Log: {user?.email?.address || user?.wallet?.address || "Admin"}
           </div>
         </div>
       </div>
@@ -79,7 +103,7 @@ export default function AdminDashboard() {
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <p className="text-xs text-gray-500 font-bold uppercase">Total Users</p>
-            <p className="text-2xl font-black text-gray-900">{users.length}</p>
+            <p className="text-2xl font-black text-gray-900">{users ? users.length : 0}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <p className="text-xs text-gray-500 font-bold uppercase">Min. Burn Rate</p>
@@ -108,51 +132,53 @@ export default function AdminDashboard() {
         {/* KONTEN UTAMA */}
         <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-gray-200 overflow-hidden min-h-[400px]">
           
-          {/* === TAB 1: REVIEW KAMPANYE (Kontrak C.1.a) === */}
+          {/* === TAB 1: REVIEW KAMPANYE === */}
           {activeTab === "campaigns" && (
             <div className="p-6">
               <h2 className="font-bold text-lg mb-4 text-gray-800">Review New Campaigns</h2>
               {pendingCampaigns.length === 0 ? <p className="text-gray-400 italic">No pending campaigns.</p> : (
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-gray-50 uppercase text-xs text-gray-500">
-                    <tr><th className="p-3">Title</th><th className="p-3">Applicant</th><th className="p-3">Target</th><th className="p-3">Action</th></tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {pendingCampaigns.map(c => (
-                      <tr key={c.id}>
-                        <td className="p-3 font-bold">{c.title}</td>
-                        <td className="p-3">{c.applicant}</td>
-                        <td className="p-3 text-green-600">${c.target}</td>
-                        <td className="p-3 flex gap-2">
-                          <button onClick={()=>handleCampaignAction(c.id, 'approve')} className="bg-green-100 text-green-700 px-3 py-1 rounded font-bold text-xs hover:bg-green-200">Approve</button>
-                          <button onClick={()=>handleCampaignAction(c.id, 'reject')} className="bg-red-100 text-red-700 px-3 py-1 rounded font-bold text-xs hover:bg-red-200">Reject</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-50 uppercase text-xs text-gray-500">
+                        <tr><th className="p-3">Title</th><th className="p-3">Applicant</th><th className="p-3">Target</th><th className="p-3">Action</th></tr>
+                    </thead>
+                    <tbody className="divide-y">
+                        {pendingCampaigns.map(c => (
+                        <tr key={c.id}>
+                            <td className="p-3 font-bold">{c.title}</td>
+                            <td className="p-3">{c.applicant}</td>
+                            <td className="p-3 text-green-600">${c.target}</td>
+                            <td className="p-3 flex gap-2">
+                            <button onClick={()=>handleCampaignAction(c.id, 'approve')} className="bg-green-100 text-green-700 px-3 py-1 rounded font-bold text-xs hover:bg-green-200">Approve</button>
+                            <button onClick={()=>handleCampaignAction(c.id, 'reject')} className="bg-red-100 text-red-700 px-3 py-1 rounded font-bold text-xs hover:bg-red-200">Reject</button>
+                            </td>
+                        </tr>
+                        ))}
+                    </tbody>
+                    </table>
+                </div>
               )}
             </div>
           )}
 
-          {/* === TAB 2: MILESTONE & DISBURSEMENT (Kontrak C.1.b & C.1.c) === */}
+          {/* === TAB 2: MILESTONE & DISBURSEMENT === */}
           {activeTab === "milestones" && (
             <div className="p-6">
               <h2 className="font-bold text-lg mb-4 text-gray-800">Disbursement Approval</h2>
               <div className="space-y-4">
                 {pendingMilestones.map(m => (
-                   <div key={m.id} className="border p-4 rounded-xl flex items-center justify-between">
+                   <div key={m.id} className="border p-4 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                       <div className="flex gap-4 items-center">
-                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden"><img src={m.proof} className="w-full h-full object-cover"/></div>
+                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0"><img src={m.proof} className="w-full h-full object-cover"/></div>
                         <div>
                            <p className="font-bold text-gray-900">{m.campaign}</p>
                            <p className="text-sm text-gray-500">{m.step} • <span className="font-bold text-green-600">{m.amount}</span></p>
                            <p className="text-xs text-blue-500 mt-1">Wallet: Subaccount Exec.</p>
                         </div>
                       </div>
-                      <div className="flex flex-col gap-2">
-                         <button onClick={()=>handleMilestoneAction(m.id, 'approve')} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-xs shadow-md hover:bg-green-700">Execute Payout</button>
-                         <button onClick={()=>handleMilestoneAction(m.id, 'reject')} className="text-red-500 text-xs font-bold hover:underline">Reject Request</button>
+                      <div className="flex flex-col gap-2 w-full md:w-auto">
+                         <button onClick={()=>handleMilestoneAction(m.id, 'approve')} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-xs shadow-md hover:bg-green-700 w-full md:w-auto">Execute Payout</button>
+                         <button onClick={()=>handleMilestoneAction(m.id, 'reject')} className="text-red-500 text-xs font-bold hover:underline w-full md:w-auto text-center">Reject Request</button>
                       </div>
                    </div>
                 ))}
@@ -160,12 +186,12 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* === TAB 3: USER MANAGEMENT (Kontrak C.2.a & C.2.b) === */}
+          {/* === TAB 3: USER MANAGEMENT === */}
           {activeTab === "users" && (
             <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                  <h2 className="font-bold text-lg text-gray-800">User List</h2>
-                 <div className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/><input type="text" placeholder="Search wallet..." className="pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-green-500"/></div>
+                 <div className="relative w-full md:w-auto"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/><input type="text" placeholder="Search wallet..." className="w-full md:w-64 pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-green-500"/></div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
@@ -173,10 +199,10 @@ export default function AdminDashboard() {
                     <tr><th className="p-3">Wallet Address</th><th className="p-3">Email</th><th className="p-3">Status</th><th className="p-3">Action</th></tr>
                   </thead>
                   <tbody className="divide-y">
-                    {users.map((u, idx) => (
+                    {users && users.map((u, idx) => (
                       <tr key={idx} className={u.status === 'suspended' ? 'bg-red-50' : ''}>
-                        <td className="p-3 font-mono text-gray-600">{u.wallet}</td>
-                        <td className="p-3">{u.email}</td>
+                        <td className="p-3 font-mono text-gray-600 text-xs">{u.wallet}</td>
+                        <td className="p-3 text-xs">{u.email}</td>
                         <td className="p-3">
                           <span className={`px-2 py-1 rounded text-xs font-bold ${u.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                              {u.status.toUpperCase()}
@@ -202,7 +228,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* === TAB 4: SETTINGS (Kontrak C.1.d) === */}
+          {/* === TAB 4: SETTINGS === */}
           {activeTab === "settings" && (
              <div className="p-6 max-w-lg">
                 <h2 className="font-bold text-lg mb-4 text-gray-800">Platform Settings</h2>
