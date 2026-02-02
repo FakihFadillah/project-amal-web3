@@ -3,7 +3,7 @@ import { useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useCampaigns } from "@/context/Campaigncontext"; 
 import { CheckCircle, XCircle, ShieldAlert, FileText, DollarSign, Users, Settings, Lock, Unlock, Search } from "lucide-react";
-
+export const dynamic = 'force-dynamic';
 export default function AdminDashboard() {
   const { user, authenticated } = usePrivy();
   // Ambil semua fungsi baru dari Context
