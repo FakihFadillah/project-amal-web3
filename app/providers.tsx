@@ -5,8 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 import { sepolia } from "viem/chains";
 import { http } from "wagmi";
+// 1. IMPORT INI (PENTING)
+import { CampaignProvider } from "@/context/Campaigncontext"; 
 
-// Konfigurasi Chain (Sepolia Testnet)
 const config = createConfig({
   chains: [sepolia],
   transports: {
@@ -16,7 +17,7 @@ const config = createConfig({
 
 const queryClient = new QueryClient();
 
-// ⚠️ PENTING: PASTIKAN APP ID INI SUDAH BENAR (clz...)
+// ⚠️ PASTIKAN APP ID INI SESUAI DENGAN PUNYA KAMU (clz...)
 const PRIVY_APP_ID = "cml0bnhs500c9l70chjnun2k7"; 
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -26,17 +27,20 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       config={{
         appearance: {
           theme: "light",
-          accentColor: "#16a34a" as const, // Kode warna hijau
+          accentColor: "#16a34a" as const,
           logo: "https://via.placeholder.com/150",
         },
         loginMethods: ["email", "wallet"],
-        // Bagian 'embeddedWallets' yang error tadi SUDAH DIHAPUS.
-        // Biar Privy pakai settingan bawaan saja (Lebih aman).
       }}
     >
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={config}>
-          {children}
+          
+          {/* 2. BUNGKUS DISINI: Biar "Otak Global" aktif di seluruh aplikasi */}
+          <CampaignProvider>
+            {children}
+          </CampaignProvider>
+
         </WagmiProvider>
       </QueryClientProvider>
     </PrivyProvider>
