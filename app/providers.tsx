@@ -1,41 +1,45 @@
 "use client";
 
-import { PrivyProvider } from '@privy-io/react-auth';
-import { WagmiProvider } from '@privy-io/wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { config } from './config/wagmi'; // Sesuaikan path config kamu
-import { ReactNode } from 'react';
-// IMPORT BARU
-import { CampaignProvider } from '@/context/Campaigncontext'; // Sesuaikan path
+import { PrivyProvider } from "@privy-io/react-auth";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WagmiProvider, createConfig } from "@privy-io/wagmi";
+import { sepolia } from "viem/chains";
+import { http } from "wagmi";
+
+// Konfigurasi Chain (Sepolia Testnet)
+const config = createConfig({
+  chains: [sepolia],
+  transports: {
+    [sepolia.id]: http(),
+  },
+});
 
 const queryClient = new QueryClient();
-const PRIVY_APP_ID = "cml0bnhs500c9l70chjnun2k7"; // ID Kamu
 
-const privyConfig = {
-    // ... config privy kamu yg lama ...
-    loginMethods: ['email', 'wallet'] as const,
-    appearance: {
-      theme: 'light' as const,
-      accentColor: '#16A34A',
-    },
-    embeddedWallets: {
-        createOnLogin: 'users-without-wallets' as const,
-    },
-};
+// PENTING: GANTI 'clz...' INI DENGAN APP ID ASLI KAMU DARI DASHBOARD PRIVY
+// (Kalau kamu lupa, cek file lama kamu sebelum ditimpa, atau ambil dari dashboard privy.io)
+const PRIVY_APP_ID = "cml0bnhs500c9l70chjnun2k7"; 
 
-export default function Providers({ children }: { children: ReactNode }) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <PrivyProvider appId={PRIVY_APP_ID} config={privyConfig}>
+    <PrivyProvider
+      appId={PRIVY_APP_ID}
+      config={{
+        // Bagian ini yang tadi error, sekarang sudah diperbaiki
+        appearance: {
+          theme: "light",
+          accentColor: "#16a34a" as const, // <-- Tambahan 'as const' biar Vercel ga marah
+          logo: "https://via.placeholder.com/150",
+        },
+        loginMethods: ["email", "wallet"],
+        embeddedWallets: {
+          createOnLogin: "users-without-wallets",
+        },
+      }}
+    >
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={config}>
-          
-          {/* PASANG CAMPAIGN PROVIDER DI SINI */}
-          <CampaignProvider>
-             <div className="min-h-screen flex flex-col">
-                {children}
-             </div>
-          </CampaignProvider>
-
+          {children}
         </WagmiProvider>
       </QueryClientProvider>
     </PrivyProvider>
