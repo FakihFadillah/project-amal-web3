@@ -1,264 +1,252 @@
 "use client";
 
 import { useState } from "react";
-import { usePrivy } from "@privy-io/react-auth";
-// Pastikan path import ini sesuai dengan struktur folder kamu
-import { useCampaigns } from "@/context/Campaigncontext"; 
-import { CheckCircle, XCircle, ShieldAlert, FileText, DollarSign, Users, Settings, Lock, Unlock, Search } from "lucide-react";
-
-// PENTING: Untuk mengatasi error "prerender" di Vercel
-export const dynamic = 'force-dynamic';
+import Link from "next/link";
+import { 
+  ShieldAlert, CheckCircle2, XCircle, FileText, 
+  ExternalLink, Wallet, Activity, AlertTriangle, 
+  ChevronRight, Lock, Unlock 
+} from "lucide-react";
 
 export default function AdminDashboard() {
-  const { user, authenticated } = usePrivy();
-  
-  // Ambil semua fungsi dari Context (Otak Global)
-  // Pastikan nama-nama fungsi ini sesuai dengan yang ada di CampaignContext.tsx kamu
-  const { 
-    campaigns, 
-    users, 
-    minBurnAmount, 
-    approveCampaign, 
-    rejectCampaign, 
-    suspendUser, 
-    unsuspendUser, 
-    updateBurnAmount 
-  } = useCampaigns(); 
-  
-  const [activeTab, setActiveTab] = useState("campaigns");
-  const [burnInput, setBurnInput] = useState(minBurnAmount ? minBurnAmount.toString() : "0");
+  const [activeTab, setActiveTab] = useState<"campaigns" | "disbursements">("campaigns");
 
-  // Filter Data: Hanya ambil kampanye yang statusnya 'pending'
-  const pendingCampaigns = campaigns ? campaigns.filter(c => c.status === 'pending') : [];
-  
-  // Dummy Milestones (Data sementara untuk demo Disbursement)
-  const [pendingMilestones, setPendingMilestones] = useState([
-    { id: 101, campaign: "Clean Water Village", step: "Termin 1", amount: "5,000 USDC", proof: "https://via.placeholder.com/150", status: "Waiting Admin" },
+  // --- DUMMY DATA (Simulasi Data Blockchain) ---
+  const [pendingCampaigns, setPendingCampaigns] = useState([
+    {
+      id: 101,
+      title: "Pembangunan Jembatan Desa Sukamaju",
+      applicant: "0x71C...9A21",
+      target: "5,000 USDC",
+      date: "2026-02-04",
+      image: "https://images.unsplash.com/photo-1513828583688-6330539f8d19?auto=format&fit=crop&q=80&w=200",
+      description: "Jembatan penghubung antar desa putus akibat longsor..."
+    },
+    {
+      id: 102,
+      title: "Beasiswa Anak Yatim Cyber",
+      applicant: "0x3dA...bB12",
+      target: "2,000 USDC",
+      date: "2026-02-05",
+      image: "https://images.unsplash.com/photo-1427504746696-ea77b49e6589?auto=format&fit=crop&q=80&w=200",
+      description: "Program pelatihan koding untuk anak panti asuhan..."
+    }
   ]);
 
-  // --- HANDLERS (Fungsi Penanganan Tombol) ---
+  const [payoutRequests, setPayoutRequests] = useState([
+    {
+      id: 55,
+      campaignTitle: "Bantuan Banjir Demak",
+      milestone: "Termin 1: Pembelian Logistik",
+      amount: "1,000 USDC",
+      proof: "https://via.placeholder.com/600x400?text=Bukti+Nota+Belanja",
+      requester: "0xUserA..."
+    },
+    {
+      id: 56,
+      campaignTitle: "Renovasi Sekolah Dasar 01",
+      milestone: "Termin 2: Upah Tukang",
+      amount: "500 USDC",
+      proof: "https://via.placeholder.com/600x400?text=Foto+Progress",
+      requester: "0xUserB..."
+    }
+  ]);
 
-  const handleCampaignAction = (id: number, action: "approve" | "reject") => {
-    if (confirm(`Yakin mau ${action} kampanye ini?`)) {
-      action === "approve" ? approveCampaign(id) : rejectCampaign(id);
+  // --- ACTIONS ---
+  const handleApprove = (id: number) => {
+    if(confirm("Setujui kampanye ini masuk ke Smart Contract?")) {
+      setPendingCampaigns(prev => prev.filter(c => c.id !== id));
+      alert("Kampanye Disetujui! ✅");
     }
   };
 
-  const handleMilestoneAction = (id: number, action: "approve" | "reject") => {
-    if (confirm(action === "approve" ? "Konfirmasi pencairan via Subaccount Wallet?" : "Tolak pencairan?")) {
-      setPendingMilestones((prev) => prev.filter((m) => m.id !== id));
-      alert(action === "approve" ? "Disbursement Executed via Smart Contract ✅" : "Rejected ❌");
+  const handleReject = (id: number) => {
+    if(confirm("Tolak kampanye ini? Gas fee user akan hangus.")) {
+      setPendingCampaigns(prev => prev.filter(c => c.id !== id));
     }
   };
 
-  // Handler User Suspend (Wajib isi alasan sesuai kontrak)
-  const handleSuspend = (wallet: string) => {
-    const reason = prompt("Masukkan alasan suspend user ini (Wajib):");
-    if (reason) {
-      suspendUser(wallet, reason);
-      alert("User berhasil di-suspend.");
+  const handleReleaseFunds = (id: number) => {
+    if(confirm("Bukti valid? Cairkan dana ke wallet user?")) {
+      setPayoutRequests(prev => prev.filter(p => p.id !== id));
+      alert("Dana Dicairkan (Disbursed)! 💸");
     }
   };
-
-  const handleSaveSettings = () => {
-    updateBurnAmount(Number(burnInput));
-    alert(`Setting disimpan! Minimum Burn sekarang: ${burnInput} $AMAL`);
-  };
-
-  // Proteksi Halaman: Jika belum login, tolak akses
-  if (!authenticated) return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <ShieldAlert size={64} className="text-red-500 mb-4" />
-        <h1 className="text-2xl font-bold text-gray-800">AKSES DITOLAK</h1>
-        <p className="text-gray-500">Silakan login terlebih dahulu untuk mengakses panel ini.</p>
-    </div>
-  );
 
   return (
-    <div className="min-h-screen bg-gray-100 pb-20">
+    <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-cyan-500 selection:text-black relative">
       
-      {/* HEADER ADMIN */}
-      <div className="bg-gray-900 text-white p-4 sticky top-0 z-50 shadow-md border-b border-gray-800">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2 font-black text-xl text-green-400">
-            <ShieldAlert /> ADMIN PANEL
+      {/* Background Cyber Grid */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none"></div>
+
+      {/* === 1. HEADER (COMMAND CENTER) === */}
+      <div className="relative z-10 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800 pt-32 pb-10 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+               <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+               <span className="text-cyan-400 font-mono text-xs font-bold uppercase tracking-[0.2em]">System Administrator</span>
+            </div>
+            <h1 className="text-4xl font-black tracking-tight text-white">
+              Governance <span className="text-slate-500">Dashboard</span>
+            </h1>
           </div>
-          <div className="text-xs text-gray-400">
-             Log: {user?.email?.address || user?.wallet?.address || "Admin"}
+          
+          <div className="flex gap-4">
+            <div className="text-right">
+               <p className="text-xs text-slate-400 font-bold uppercase">Network Status</p>
+               <p className="text-green-400 font-mono font-bold flex items-center justify-end gap-2">
+                 <span className="w-2 h-2 bg-green-500 rounded-full"></span> Online (Sepolia)
+               </p>
+            </div>
+            <div className="h-10 w-px bg-slate-700"></div>
+            <div className="text-right">
+               <p className="text-xs text-slate-400 font-bold uppercase">Pending Actions</p>
+               <p className="text-white font-mono font-bold">{pendingCampaigns.length + payoutRequests.length} Tasks</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <main className="max-w-6xl mx-auto px-6 mt-8">
+      <main className="max-w-7xl mx-auto px-6 py-12 relative z-10">
         
-        {/* STATS ROW */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <p className="text-xs text-gray-500 font-bold uppercase">Pending Campaign</p>
-            <p className="text-2xl font-black text-yellow-500">{pendingCampaigns.length}</p>
-          </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <p className="text-xs text-gray-500 font-bold uppercase">Payout Request</p>
-            <p className="text-2xl font-black text-blue-500">{pendingMilestones.length}</p>
-          </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <p className="text-xs text-gray-500 font-bold uppercase">Total Users</p>
-            <p className="text-2xl font-black text-gray-900">{users ? users.length : 0}</p>
-          </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <p className="text-xs text-gray-500 font-bold uppercase">Min. Burn Rate</p>
-            <p className="text-2xl font-black text-green-600">{minBurnAmount} <span className="text-xs text-gray-400">$AMAL</span></p>
-          </div>
+        {/* === 2. STATS OVERVIEW === */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+           <div className="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl -mr-6 -mt-6"></div>
+              <Activity className="text-cyan-400 mb-4" size={28} />
+              <h3 className="text-3xl font-black text-white">124</h3>
+              <p className="text-slate-400 text-sm font-bold uppercase tracking-wider">Total Campaigns</p>
+           </div>
+           
+           <div className="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl -mr-6 -mt-6"></div>
+              <Wallet className="text-purple-400 mb-4" size={28} />
+              <h3 className="text-3xl font-black text-white">$45.2K</h3>
+              <p className="text-slate-400 text-sm font-bold uppercase tracking-wider">TVL (Dana Terkunci)</p>
+           </div>
+
+           <div className="bg-slate-900 p-6 rounded-[2rem] border border-slate-800 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl -mr-6 -mt-6"></div>
+              <AlertTriangle className="text-orange-400 mb-4" size={28} />
+              <h3 className="text-3xl font-black text-white">{pendingCampaigns.length}</h3>
+              <p className="text-slate-400 text-sm font-bold uppercase tracking-wider">Pending Review</p>
+           </div>
         </div>
 
-        {/* MENU TABS */}
-        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-300 pb-1">
-          {[
-            { id: "campaigns", icon: <FileText size={16}/>, label: "Campaigns" },
-            { id: "milestones", icon: <DollarSign size={16}/>, label: "Disbursement" },
-            { id: "users", icon: <Users size={16}/>, label: "User Mgmt" },
-            { id: "settings", icon: <Settings size={16}/>, label: "Settings" },
-          ].map((tab) => (
-            <button 
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-t-lg font-bold text-sm flex items-center gap-2 transition ${activeTab === tab.id ? "bg-white text-green-700 border border-gray-300 border-b-white -mb-[5px]" : "text-gray-500 hover:bg-gray-200"}`}
-            >
-              {tab.icon} {tab.label}
-            </button>
-          ))}
+        {/* === 3. TAB NAVIGATION === */}
+        <div className="flex gap-4 mb-8 border-b border-slate-800 pb-1">
+           <button 
+             onClick={() => setActiveTab("campaigns")}
+             className={`pb-4 px-2 text-sm font-bold uppercase tracking-wider transition-all ${activeTab === "campaigns" ? "text-cyan-400 border-b-2 border-cyan-400" : "text-slate-500 hover:text-slate-300"}`}
+           >
+             Campaign Approvals ({pendingCampaigns.length})
+           </button>
+           <button 
+             onClick={() => setActiveTab("disbursements")}
+             className={`pb-4 px-2 text-sm font-bold uppercase tracking-wider transition-all ${activeTab === "disbursements" ? "text-purple-400 border-b-2 border-purple-400" : "text-slate-500 hover:text-slate-300"}`}
+           >
+             Disbursement Requests ({payoutRequests.length})
+           </button>
         </div>
 
-        {/* KONTEN UTAMA */}
-        <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-sm border border-gray-200 overflow-hidden min-h-[400px]">
-          
-          {/* === TAB 1: REVIEW KAMPANYE === */}
-          {activeTab === "campaigns" && (
-            <div className="p-6">
-              <h2 className="font-bold text-lg mb-4 text-gray-800">Review New Campaigns</h2>
-              {pendingCampaigns.length === 0 ? <p className="text-gray-400 italic">No pending campaigns.</p> : (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 uppercase text-xs text-gray-500">
-                        <tr><th className="p-3">Title</th><th className="p-3">Applicant</th><th className="p-3">Target</th><th className="p-3">Action</th></tr>
-                    </thead>
-                    <tbody className="divide-y">
-                        {pendingCampaigns.map(c => (
-                        <tr key={c.id}>
-                            <td className="p-3 font-bold">{c.title}</td>
-                            <td className="p-3">{c.applicant}</td>
-                            <td className="p-3 text-green-600">${c.target}</td>
-                            <td className="p-3 flex gap-2">
-                            <button onClick={()=>handleCampaignAction(c.id, 'approve')} className="bg-green-100 text-green-700 px-3 py-1 rounded font-bold text-xs hover:bg-green-200">Approve</button>
-                            <button onClick={()=>handleCampaignAction(c.id, 'reject')} className="bg-red-100 text-red-700 px-3 py-1 rounded font-bold text-xs hover:bg-red-200">Reject</button>
-                            </td>
-                        </tr>
-                        ))}
-                    </tbody>
-                    </table>
-                </div>
-              )}
-            </div>
-          )}
+        {/* === 4. LIST CONTENT === */}
+        
+        {/* TAB 1: CAMPAIGNS */}
+        {activeTab === "campaigns" && (
+          <div className="space-y-4">
+             {pendingCampaigns.length > 0 ? pendingCampaigns.map((campaign) => (
+                <div key={campaign.id} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col md:flex-row items-center gap-6 hover:border-cyan-500/30 transition shadow-lg">
+                   {/* Image */}
+                   <div className="w-full md:w-32 h-32 rounded-2xl overflow-hidden shrink-0 bg-slate-800">
+                      <img src={campaign.image} alt="Campaign" className="w-full h-full object-cover" />
+                   </div>
 
-          {/* === TAB 2: MILESTONE & DISBURSEMENT === */}
-          {activeTab === "milestones" && (
-            <div className="p-6">
-              <h2 className="font-bold text-lg mb-4 text-gray-800">Disbursement Approval</h2>
-              <div className="space-y-4">
-                {pendingMilestones.map(m => (
-                   <div key={m.id} className="border p-4 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                      <div className="flex gap-4 items-center">
-                        <div className="w-16 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0"><img src={m.proof} className="w-full h-full object-cover"/></div>
-                        <div>
-                           <p className="font-bold text-gray-900">{m.campaign}</p>
-                           <p className="text-sm text-gray-500">{m.step} • <span className="font-bold text-green-600">{m.amount}</span></p>
-                           <p className="text-xs text-blue-500 mt-1">Wallet: Subaccount Exec.</p>
-                        </div>
+                   {/* Info */}
+                   <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                         <span className="px-2 py-0.5 rounded bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-bold uppercase">Pending Review</span>
+                         <span className="text-slate-500 text-xs font-mono">{campaign.date}</span>
                       </div>
-                      <div className="flex flex-col gap-2 w-full md:w-auto">
-                         <button onClick={()=>handleMilestoneAction(m.id, 'approve')} className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-xs shadow-md hover:bg-green-700 w-full md:w-auto">Execute Payout</button>
-                         <button onClick={()=>handleMilestoneAction(m.id, 'reject')} className="text-red-500 text-xs font-bold hover:underline w-full md:w-auto text-center">Reject Request</button>
+                      <h3 className="text-xl font-bold text-white mb-1">{campaign.title}</h3>
+                      <p className="text-slate-400 text-sm line-clamp-2 mb-4">{campaign.description}</p>
+                      
+                      <div className="flex items-center gap-4 text-xs font-mono text-slate-300">
+                         <span className="flex items-center gap-1"><Wallet size={12}/> {campaign.applicant}</span>
+                         <span className="flex items-center gap-1"><Activity size={12}/> Target: {campaign.target}</span>
                       </div>
                    </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {/* === TAB 3: USER MANAGEMENT === */}
-          {activeTab === "users" && (
-            <div className="p-6">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                 <h2 className="font-bold text-lg text-gray-800">User List</h2>
-                 <div className="relative w-full md:w-auto"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"/><input type="text" placeholder="Search wallet..." className="w-full md:w-64 pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-green-500"/></div>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-gray-50 uppercase text-xs text-gray-500">
-                    <tr><th className="p-3">Wallet Address</th><th className="p-3">Email</th><th className="p-3">Status</th><th className="p-3">Action</th></tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {users && users.map((u, idx) => (
-                      <tr key={idx} className={u.status === 'suspended' ? 'bg-red-50' : ''}>
-                        <td className="p-3 font-mono text-gray-600 text-xs">{u.wallet}</td>
-                        <td className="p-3 text-xs">{u.email}</td>
-                        <td className="p-3">
-                          <span className={`px-2 py-1 rounded text-xs font-bold ${u.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                             {u.status.toUpperCase()}
-                          </span>
-                          {u.status === 'suspended' && <p className="text-[10px] text-red-500 mt-1">Reason: {u.suspendReason}</p>}
-                        </td>
-                        <td className="p-3">
-                          {u.status === 'active' ? (
-                            <button onClick={()=>handleSuspend(u.wallet)} className="flex items-center gap-1 text-red-500 border border-red-200 px-3 py-1 rounded hover:bg-red-50 font-bold text-xs">
-                               <Lock size={12} /> Suspend
-                            </button>
-                          ) : (
-                            <button onClick={()=>unsuspendUser(u.wallet)} className="flex items-center gap-1 text-green-600 border border-green-200 px-3 py-1 rounded hover:bg-green-50 font-bold text-xs">
-                               <Unlock size={12} /> Lift Ban
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* === TAB 4: SETTINGS === */}
-          {activeTab === "settings" && (
-             <div className="p-6 max-w-lg">
-                <h2 className="font-bold text-lg mb-4 text-gray-800">Platform Settings</h2>
-                
-                <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Minimum $AMAL Burn to Create Campaign
-                   </label>
-                   <p className="text-xs text-gray-500 mb-4">
-                      Sesuai kontrak C.1.d, user harus membakar sejumlah token untuk membuat kampanye (spam prevention).
-                   </p>
-                   <div className="flex gap-2">
-                      <div className="relative flex-1">
-                         <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-400">$AMAL</span>
-                         <input 
-                            type="number" 
-                            value={burnInput}
-                            onChange={(e) => setBurnInput(e.target.value)}
-                            className="w-full pl-16 pr-4 py-3 border rounded-lg font-bold text-gray-900 outline-none focus:ring-2 focus:ring-green-500"
-                         />
-                      </div>
-                      <button onClick={handleSaveSettings} className="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 shadow-lg">
-                         Save
+                   {/* Actions */}
+                   <div className="flex flex-row md:flex-col gap-3 w-full md:w-auto">
+                      <button 
+                        onClick={() => handleApprove(campaign.id)}
+                        className="flex-1 px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold text-sm transition flex items-center justify-center gap-2"
+                      >
+                         <CheckCircle2 size={16} /> Approve
+                      </button>
+                      <button 
+                        onClick={() => handleReject(campaign.id)}
+                        className="flex-1 px-6 py-3 bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-300 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 border border-slate-700 hover:border-red-500/50"
+                      >
+                         <XCircle size={16} /> Reject
                       </button>
                    </div>
                 </div>
-             </div>
-          )}
+             )) : (
+                <div className="text-center py-20 border border-dashed border-slate-800 rounded-3xl text-slate-500">
+                   <ShieldAlert size={40} className="mx-auto mb-4 opacity-50"/>
+                   <p>No pending campaigns to review.</p>
+                </div>
+             )}
+          </div>
+        )}
 
-        </div>
+        {/* TAB 2: DISBURSEMENTS */}
+        {activeTab === "disbursements" && (
+           <div className="space-y-4">
+              {payoutRequests.length > 0 ? payoutRequests.map((request) => (
+                 <div key={request.id} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col md:flex-row items-center gap-6 hover:border-purple-500/30 transition shadow-lg relative overflow-hidden">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-500"></div>
+                    
+                    <div className="flex-1">
+                       <h4 className="text-sm text-slate-400 font-bold uppercase tracking-wider mb-1">{request.campaignTitle}</h4>
+                       <h3 className="text-xl font-bold text-white mb-2">{request.milestone}</h3>
+                       <div className="flex items-center gap-4 text-sm mb-4">
+                          <span className="text-purple-400 font-mono font-bold bg-purple-500/10 px-2 py-1 rounded">Ask: {request.amount}</span>
+                          <span className="text-slate-500 font-mono">by {request.requester}</span>
+                       </div>
+                       
+                       {/* Proof Attachment */}
+                       <a href={request.proof} target="_blank" className="inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white underline decoration-slate-600 hover:decoration-white transition">
+                          <FileText size={14} /> Lihat Bukti / Nota (Link) <ExternalLink size={12}/>
+                       </a>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-row md:flex-col gap-3 w-full md:w-auto">
+                      <button 
+                        onClick={() => handleReleaseFunds(request.id)}
+                        className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-green-900/20"
+                      >
+                         <Unlock size={16} /> Release Fund
+                      </button>
+                      <button 
+                         className="flex-1 px-6 py-3 bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-300 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 border border-slate-700 hover:border-red-500/50"
+                      >
+                         <Lock size={16} /> Reject & Hold
+                      </button>
+                   </div>
+                 </div>
+              )) : (
+                 <div className="text-center py-20 border border-dashed border-slate-800 rounded-3xl text-slate-500">
+                    <Wallet size={40} className="mx-auto mb-4 opacity-50"/>
+                    <p>No disbursement requests pending.</p>
+                 </div>
+              )}
+           </div>
+        )}
+
       </main>
     </div>
   );

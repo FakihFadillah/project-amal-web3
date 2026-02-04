@@ -1,51 +1,68 @@
 "use client";
-import CampaignCard from "@/components/Campaigncard";
-import Link from "next/link";
-import { PlusCircle } from "lucide-react";
 
-// Data Dummy dengan Status Campur-campur (Sesuai Kontrak)
-const MY_CAMPAIGNS = [
-  { id: 1, judul: "Bantu Renovasi Sekolah", target: "5,000", terkumpul: 0, sisaHari: 30, backer: 0, image: "bg-yellow-50", status: "pending" as const },
-  { id: 2, judul: "Sumur Air Bersih Desa", target: "2,000", terkumpul: 45, sisaHari: 12, backer: 24, image: "bg-blue-100", status: "ongoing" as const },
-  { id: 3, judul: "Kampanye Ditolak", target: "10,000", terkumpul: 0, sisaHari: 0, backer: 0, image: "bg-red-50", status: "rejected" as const },
-];
+import Link from "next/link";
+import { useCampaigns } from "@/context/Campaigncontext"; 
+import CampaignCard from "@/components/Campaigncard";
+import { PlusCircle, ArrowLeft, LayoutDashboard } from "lucide-react";
 
 export default function MyCampaignsPage() {
+  const { campaigns } = useCampaigns();
+  
+  // Simulasi: Mengambil semua kampanye (Anggap ini milik user yang login)
+  const myCampaigns = campaigns; 
+
   return (
-    <main className="min-h-screen bg-gray-50 pt-24 pb-12 px-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 pt-32 pb-20 px-6 font-sans relative">
+      
+       {/* Background Grid */}
+       <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         
-        {/* Header Dashboard */}
-        <div className="flex justify-between items-center mb-8">
+        {/* Header Navigasi */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <div>
-            <h1 className="text-3xl font-black text-gray-900">Kampanye Saya</h1>
-            <p className="text-gray-500">Kelola status dan perkembangan proyekmu.</p>
+            <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-500 hover:text-green-600 font-bold text-sm mb-4 transition">
+                <ArrowLeft size={16}/> Kembali ke Dashboard
+            </Link>
+            <h1 className="text-4xl font-black text-gray-900 mb-2">My Campaigns</h1>
+            <p className="text-gray-500">Kelola semua proyek penggalangan danamu di sini.</p>
           </div>
           <Link href="/create">
-            <button className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full font-bold hover:bg-green-700 transition">
+            <button className="flex items-center gap-2 bg-green-600 text-white px-8 py-4 rounded-full font-bold hover:bg-green-700 transition shadow-lg hover:shadow-green-200 hover:-translate-y-1">
               <PlusCircle size={20} /> Buat Baru
             </button>
           </Link>
         </div>
 
         {/* List Kampanye */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {MY_CAMPAIGNS.map((item) => (
-            <CampaignCard key={item.id} {...item} />
-          ))}
-        </div>
-
-        {/* Info Kontrak */}
-        <div className="mt-12 bg-blue-50 border border-blue-100 p-6 rounded-xl text-sm text-blue-800">
-          <strong>Catatan Sesuai Smart Contract:</strong>
-          <ul className="list-disc ml-5 mt-2 space-y-1">
-            <li>Status <strong>Pending</strong> sedang direview oleh Admin Dashboard.</li>
-            <li>Kampanye <strong>Rejected</strong> tidak dapat diedit kembali (harus buat baru).</li>
-            <li>Pastikan kamu memiliki saldo <strong>$AMAL</strong> untuk staking sebelum membuat kampanye baru.</li>
-          </ul>
-        </div>
+        {myCampaigns.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {myCampaigns.map((item) => (
+              <CampaignCard 
+                key={item.id} 
+                {...item} 
+                image={item.image || "https://via.placeholder.com/400x300"} 
+                // 👇 INI KUNCINYA: Kita nyalakan Mode Edit di sini
+                isEditable={true} 
+              />
+            ))}
+          </div>
+        ) : (
+          // Tampilan kalau belum punya kampanye
+          <div className="text-center py-24 bg-white rounded-[2.5rem] border border-dashed border-gray-300 shadow-sm">
+             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <LayoutDashboard size={32} className="text-gray-400"/>
+             </div>
+             <p className="text-gray-900 font-bold text-xl mb-2">Kamu belum memiliki kampanye.</p>
+             <p className="text-gray-500 mb-8">Mulai langkah pertamamu sekarang.</p>
+             <Link href="/create" className="px-8 py-3 bg-gray-900 text-white rounded-full font-bold hover:bg-green-600 transition shadow-lg">
+                Mulai Buat Kampanye
+             </Link>
+          </div>
+        )}
 
       </div>
-    </main>
+    </div>
   );
 }
