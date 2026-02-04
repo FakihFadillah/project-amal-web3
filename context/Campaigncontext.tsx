@@ -32,17 +32,41 @@ export const CampaignProvider = ({ children }: { children: ReactNode }) => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([
     {
       id: 1,
-      title: "Bantuan Banjir Demak",
-      description: "Donasi untuk korban banjir bandang di Demak, Jawa Tengah.",
-      target: "5000",
-      deadline: Date.now() + 86400000 * 10,
-      amountCollected: "2500000000000000000000", 
-      image: "https://images.unsplash.com/photo-1547625121-a3962b800e39?q=80&w=1000&auto=format&fit=crop",
-      donators: ["0x123...", "0x456..."],
+      title: "Bantu Anak Sekolah Kembali Belajar",
+      description: "Masih banyak anak-anak yang ingin sekolah, tapi terkendala biaya perlengkapan seperti buku, seragam, dan alat tulis. Melalui program ini, donasi yang terkumpul akan digunakan untuk: Paket alat tulis & buku, Seragam sekolah, Biaya SPP, dan Bantuan transportasi.",
+      target: "1000", 
+      deadline: Date.now() + 86400000 * 30,
+      amountCollected: "0",
+      image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1000&auto=format&fit=crop",
+      donators: [],
       status: "approved",
-      applicant: "0xUserA..."
+      applicant: "0x71C...9A21"
     },
-    // ... data dummy lainnya
+    {
+      id: 2,
+      title: "Darurat Bencana: Bantu Korban Mengungsi",
+      description: "Bencana alam datang tanpa peringatan. Banyak keluarga kehilangan rumah, makanan, dan kebutuhan dasar. Donasi digunakan untuk: Paket makanan siap saji, Selimut & pakaian hangat, Obat-obatan, Air bersih & tenda darurat.",
+      target: "3500", 
+      deadline: Date.now() + 86400000 * 14,
+      amountCollected: "500000000000000000000", 
+      // 👇 INI LINK GAMBAR BARUNYA (Suasana Banjir & Evakuasi)
+      image: "https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg",
+      donators: ["0x123..."],
+      status: "approved",
+      applicant: "0x3dA...bB12"
+    },
+    {
+      id: 3,
+      title: "Selamatkan Kucing & Anjing Jalanan",
+      description: "Hewan terlantar di jalanan sering kelaparan, sakit, bahkan mengalami kekerasan. Dana akan digunakan untuk: Makanan kucing & anjing, Sterilisasi & vaksin, Biaya pengobatan, serta Rescue dan shelter sementara.",
+      target: "700", 
+      deadline: Date.now() + 86400000 * 30,
+      amountCollected: "350000000000000000000", 
+      image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?q=80&w=1000&auto=format&fit=crop",
+      donators: ["0xUserC..."],
+      status: "approved",
+      applicant: "0xAnimalRescuer"
+    }
   ]);
 
   const [isLoading, setIsLoading] = useState(true);
