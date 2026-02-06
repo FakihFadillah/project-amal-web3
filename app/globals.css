@@ -1,14 +1,37 @@
-@import "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===========================
+   GLOBAL BASE SETTINGS
+   =========================== */
 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
+
+  text-rendering: optimizeLegibility;
 }
 
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* IMPORTANT: Fix scroll bug */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Body styling */
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -17,31 +40,138 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* iOS safe area notch */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  /* Mobile smooth scroll */
+  -webkit-overflow-scrolling: touch;
+
+  /* Prevent ugly tap highlight */
+  -webkit-tap-highlight-color: transparent;
+
+  /* Overscroll behavior (no weird bounce) */
+  overscroll-behavior-y: auto;
 }
 
-/* Biar scrollbar-nya nggak jelek */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+/* Remove ugly highlight on iOS */
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ... kode tailwind sebelumnya ... */
+/* Improve input/button feel */
+button,
+a,
+input,
+textarea {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection */
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Image rendering */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===========================
+   PERFORMANCE OPTIMIZATION
+   =========================== */
+
+/* Disable heavy blur on mobile (makes Android lag) */
+@media (max-width: 768px) {
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl {
+    backdrop-filter: none !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  /* Reduce heavy shadow */
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
+/* Disable animations if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===========================
+   UTILITIES
+   =========================== */
 
 @layer utilities {
+  /* Smooth fade animation */
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(20px); /* Muncul dari bawah sedikit */
+      transform: translateY(18px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-16px);
+    }
+  }
+
+  /* Hide scrollbar but still scroll (USE ONLY WHEN NEEDED) */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

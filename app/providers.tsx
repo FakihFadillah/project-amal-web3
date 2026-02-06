@@ -7,13 +7,13 @@ import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 import { sepolia } from "viem/chains";
 import { http } from "wagmi";
 
-// ✅ GLOBAL CONTEXT (WAJIB)
-import { CampaignProvider } from "@/context/Campaigncontext";
+// Pastikan import ini sesuai nama file kamu (CampaignContext.tsx)
+import { CampaignProvider } from "@/context/Campaigncontext"; 
 
 // ==================
 // WAGMI CONFIG
 // ==================
-const config = createConfig({
+const wagmiConfig = createConfig({
   chains: [sepolia],
   transports: {
     [sepolia.id]: http(),
@@ -35,7 +35,7 @@ const queryClient = new QueryClient({
 // ==================
 // PRIVY CONFIG
 // ==================
-const PRIVY_APP_ID = "cml0bnhs500c9l70chjnun2k7"; // 🔒 punyamu
+const PRIVY_APP_ID = "cml0bnhs500c9l70chjnun2k7";
 
 export default function Providers({
   children,
@@ -45,18 +45,19 @@ export default function Providers({
   return (
     <PrivyProvider
       appId={PRIVY_APP_ID}
+      // Kita sederhanakan config-nya biar gak ada yang merah
       config={{
         appearance: {
           theme: "light",
           accentColor: "#16a34a",
           logo: "https://via.placeholder.com/150",
         },
-        loginMethods: ["email", "wallet"],
+        // Pakai 'as const' biar TypeScript gak rewel
+        loginMethods: ["email", "wallet"] as const, 
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={config}>
-          {/* 🧠 GLOBAL STATE — AKTIF DI SELURUH APP */}
+        <WagmiProvider config={wagmiConfig}>
           <CampaignProvider>
             {children}
           </CampaignProvider>

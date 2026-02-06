@@ -1,157 +1,496 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck, Globe, Zap, Heart, Code2, Cpu, ArrowRight, Github, Linkedin, Terminal } from "lucide-react";
+import {
+  ShieldCheck,
+  Globe,
+  Cpu,
+  ArrowRight,
+  Terminal,
+  Heart,
+  Coins,
+  Layers,
+  Lock,
+  Users,
+  BadgeCheck,
+  CheckCircle2,
+  FileText,
+  Wallet,
+} from "lucide-react";
+
+const features = {
+  donor: [
+    "Browse all fundraising campaigns",
+    "View campaign details & milestones",
+    "Donate using USDC",
+    "View donation history",
+    "View transaction receipts (timestamp + amount)",
+    "Claim refund if campaign is canceled",
+  ],
+  fundraiser: [
+    "Create fundraising campaigns",
+    "Upload project details, story, and target funding",
+    "Define milestone disbursement plan",
+    "Submit milestone evidence (photo/documents)",
+    "Track fundraising performance",
+    "Request disbursement transparently",
+    "Campaign lifecycle status: Draft, Pending, Ongoing, Closed, Rejected, Canceled",
+  ],
+  admin: [
+    "Approve / reject fundraising campaigns",
+    "Review milestone submissions",
+    "Approve milestone-based fund release",
+    "Manage users and campaign activities",
+    "Suspend suspicious users/wallets",
+    "Maintain audit logs and history",
+  ],
+};
+
+const steps = [
+  {
+    title: "Browse Campaigns",
+    desc: "Users can explore verified fundraising campaigns.",
+    icon: <Globe className="w-6 h-6" />,
+  },
+  {
+    title: "Donate Using USDC",
+    desc: "Donations use USDC for stable value and no crypto volatility.",
+    icon: <Wallet className="w-6 h-6" />,
+  },
+  {
+    title: "Funds Locked in Escrow",
+    desc: "Funds are stored safely in escrow smart contracts.",
+    icon: <Lock className="w-6 h-6" />,
+  },
+  {
+    title: "Milestone Disbursement",
+    desc: "Fundraisers receive funds gradually after milestone approval.",
+    icon: <BadgeCheck className="w-6 h-6" />,
+  },
+];
+
+const faq = [
+  {
+    q: "Is $AMAL safe?",
+    a: "Yes. Donations are stored in escrow smart contracts and recorded on-chain.",
+  },
+  {
+    q: "Can I track my donation?",
+    a: "Absolutely. Users can view receipts, timestamps, and campaign progress.",
+  },
+  {
+    q: "What happens if a campaign is canceled?",
+    a: "Users can claim their contribution back directly to their wallet address.",
+  },
+  {
+    q: "Why use USDC?",
+    a: "USDC ensures stable donation value without price fluctuation.",
+  },
+];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-green-100 selection:text-green-900 relative overflow-hidden">
-      
-      {/* === BACKGROUND ELEMENTS === */}
-      {/* Grid Pattern */}
-      <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-      
-      {/* Animated Blobs */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-green-100/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
-         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-100/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
+    <div className="relative min-h-screen bg-white text-gray-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+      {/* Background Grid (lightweight) */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.35] bg-[linear-gradient(to_right,#0000000d_1px,transparent_1px),linear-gradient(to_bottom,#0000000d_1px,transparent_1px)] bg-[size:60px_60px]" />
+
+      {/* Soft Glow (safe blur, still looks premium) */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-[-80px] right-[-80px] h-[520px] w-[520px] rounded-full bg-gradient-to-br from-emerald-200/70 to-transparent blur-[80px]" />
+        <div className="absolute bottom-[-120px] left-[-120px] h-[520px] w-[520px] rounded-full bg-gradient-to-br from-sky-200/60 to-transparent blur-[90px]" />
       </div>
 
-      <main className="relative z-10 pt-32 pb-20 px-6 max-w-7xl mx-auto">
-
-        {/* === 1. HERO SECTION === */}
-        <div className="text-center max-w-4xl mx-auto mb-24">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
-             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-             Our Mission
+      <main className="relative z-10 pt-28 md:pt-36 pb-24 px-6 max-w-7xl mx-auto">
+        {/* HERO */}
+        <section className="text-center max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 bg-white/70 backdrop-blur-sm text-sm font-medium text-emerald-700 shadow-sm">
+            <Heart className="w-4 h-4" />
+            ABOUT $AMAL
           </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-gray-900 mb-8 leading-[1.1]">
-            We are rewriting <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-400">
-              the Trust Protocol.
+
+          <h1 className="mt-6 text-5xl md:text-7xl font-black tracking-tight leading-tight text-gray-900">
+            About{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-lime-500">
+              $AMAL
             </span>
           </h1>
-          
-          <p className="text-xl text-gray-500 leading-relaxed max-w-2xl mx-auto">
-            $AMAL bukan sekadar platform donasi. Ini adalah eksperimen sosial menggunakan teknologi Blockchain untuk menghapus keraguan dalam berbagi kebaikan.
+
+          <p className="mt-5 text-lg md:text-xl text-gray-600 leading-relaxed">
+            A decentralized crowdfunding platform built for transparency, trust,
+            and global impact.
           </p>
-        </div>
 
-        {/* === 2. THE PROBLEM vs SOLUTION (Glass Cards) === */}
-        <div className="grid md:grid-cols-3 gap-8 mb-32">
-          {/* Card 1 */}
-          <div className="bg-white/60 backdrop-blur-md p-8 rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/50 hover:-translate-y-2 transition-transform duration-300">
-            <div className="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-6 text-2xl">❌</div>
-            <h3 className="text-xl font-black text-gray-900 mb-3">Masalah Lama</h3>
-            <p className="text-gray-500 leading-relaxed">
-              "Uang donasi saya beneran sampai gak sih?" <br/>
-              Potongan biaya admin yang besar, laporan keuangan yang tidak transparan, dan risiko penyelewengan dana.
-            </p>
+          <p className="mt-6 text-base md:text-lg text-gray-700 leading-relaxed">
+            <span className="font-semibold">$AMAL</span> is a Web3-based donation
+            platform inspired by Kitabisa, designed to make fundraising
+            transparent, secure, and verifiable. Every donation is stored in
+            smart contracts, ensuring funds are tracked and disbursed fairly
+            based on approved milestones.
+          </p>
+
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/explore"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition"
+            >
+              Explore Campaigns <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <a
+              href="#how-it-works"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-sm text-gray-800 font-semibold hover:border-emerald-300 hover:text-emerald-700 transition"
+            >
+              How It Works
+            </a>
           </div>
+        </section>
 
-          {/* Arrow Connector (Hidden on Mobile) */}
-          <div className="hidden md:flex items-center justify-center text-gray-300">
-             <ArrowRight size={40} className="animate-pulse" />
+        {/* OUR MISSION */}
+        <section className="mt-28 max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center">
+            Our Mission
+          </h2>
+
+          <p className="mt-6 text-lg text-gray-700 leading-relaxed text-center">
+            We believe that giving should not rely solely on trust — it should be
+            supported by technology. <span className="font-semibold">$AMAL</span>{" "}
+            exists to empower donors and fundraisers by providing a system where
+            every transaction is auditable, transparent, and immutable.
+          </p>
+        </section>
+
+        {/* WHY BUILT */}
+        <section className="mt-24 max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center">
+            Why We Built <span className="text-emerald-600">$AMAL</span>
+          </h2>
+
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-rose-50 border border-rose-100">
+                  <FileText className="w-6 h-6 text-rose-500" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">
+                  Problems in Traditional Donation
+                </h3>
+              </div>
+
+              <ul className="mt-6 space-y-3 text-gray-700 text-base">
+                <li>• Donasi tradisional sering kurang transparan</li>
+                <li>• Donatur tidak bisa memantau dana dengan jelas</li>
+                <li>• Dana kadang lama sampai ke penerima</li>
+                <li>• Banyak kasus fraud atau campaign palsu</li>
+              </ul>
+            </div>
+
+            <div className="rounded-3xl bg-gradient-to-br from-emerald-600 to-green-500 text-white shadow-xl p-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-white/15 border border-white/20">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold">Solution with $AMAL</h3>
+              </div>
+
+              <p className="mt-6 text-base leading-relaxed text-white/90">
+                Traditional fundraising platforms often depend on centralized
+                trust. With <span className="font-semibold">$AMAL</span>, we
+                introduce a decentralized escrow mechanism where donations are
+                stored safely in smart contracts, not in personal bank accounts.
+              </p>
+
+              <p className="mt-4 font-semibold text-white">
+                100% Transparent. 100% Trackable.
+              </p>
+            </div>
           </div>
+        </section>
 
-          {/* Card 3 (Solution) */}
-          <div className="bg-gradient-to-br from-green-600 to-emerald-500 text-white p-8 rounded-[2.5rem] shadow-2xl shadow-green-200 hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden">
-            {/* Hiasan */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-            
-            <div className="w-14 h-14 bg-white/20 text-white rounded-2xl flex items-center justify-center mb-6 text-2xl backdrop-blur-md border border-white/20">✅</div>
-            <h3 className="text-xl font-black text-white mb-3">Solusi $AMAL</h3>
-            <p className="text-green-50 leading-relaxed opacity-90">
-              Smart Contract menggantikan "orang tengah". Donasi terkunci di Blockchain dan hanya cair jika bukti penggunaan dana valid. 100% Transparan.
-            </p>
-          </div>
-        </div>
+        {/* HOW IT WORKS */}
+        <section id="how-it-works" className="mt-28 max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center">
+            How <span className="text-emerald-600">$AMAL</span> Works
+          </h2>
 
-        {/* === 3. CORE TECHNOLOGY (Bento Grid) === */}
-        <div className="mb-32">
-           <h2 className="text-3xl font-black text-center mb-12">Powered by Modern Web3 Stack</h2>
-           
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {/* Tech 1 */}
-              <div className="md:col-span-2 bg-gray-900 text-white p-8 rounded-[2rem] relative overflow-hidden group">
-                 <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-purple-500/30 transition"></div>
-                 <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-4 text-purple-400 font-bold uppercase tracking-wider text-xs">
-                       <Cpu size={16} /> Blockchain Layer
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">Smart Contracts</h3>
-                    <p className="text-gray-400">Logika pencairan dana diatur oleh kode otonom yang tidak bisa disuap atau dimanipulasi.</p>
-                 </div>
-              </div>
+          <p className="mt-5 text-lg text-gray-600 text-center max-w-3xl mx-auto">
+            A milestone-based escrow system that ensures donations are used
+            responsibly and released only when evidence is verified.
+          </p>
 
-              {/* Tech 2 */}
-              <div className="bg-white p-8 rounded-[2rem] border border-gray-200 shadow-sm hover:border-green-300 transition group">
-                 <div className="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                    <ShieldCheck size={24} />
-                 </div>
-                 <h3 className="text-xl font-bold mb-2">Privy Auth</h3>
-                 <p className="text-sm text-gray-500">Login semudah email, seaman crypto wallet.</p>
-              </div>
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {steps.map((step, i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-6 hover:shadow-lg transition"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600">
+                    {step.icon}
+                  </div>
+                  <span className="text-sm font-bold text-gray-400">
+                    Step {i + 1}
+                  </span>
+                </div>
 
-              {/* Tech 3 */}
-              <div className="bg-white p-8 rounded-[2rem] border border-gray-200 shadow-sm hover:border-blue-300 transition group">
-                 <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                    <Globe size={24} />
-                 </div>
-                 <h3 className="text-xl font-bold mb-2">Global Payment</h3>
-                 <p className="text-sm text-gray-500">Terima donasi USDC dari seluruh dunia tanpa batas.</p>
-              </div>
-           </div>
-        </div>
-
-        {/* === 4. MEET THE DEVELOPER (Dark Mode Card) === */}
-        <div className="bg-[#0F172A] rounded-[3rem] p-8 md:p-16 text-center relative overflow-hidden shadow-2xl shadow-gray-400/50">
-           {/* Abstract Glow */}
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-           <div className="relative z-10 max-w-2xl mx-auto">
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-4xl mb-6 shadow-lg shadow-green-500/20 border-4 border-white/10">
-                 👨‍💻
-              </div>
-              
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Fakih Shidqi Fadillah</h2>
-              <p className="text-green-400 font-bold uppercase tracking-widest text-xs mb-8">Founder & Lead Blockchain Developer</p>
-              
-              <div className="relative">
-                <span className="absolute -top-4 -left-2 text-6xl text-white/10 font-serif">“</span>
-                <p className="text-xl text-gray-300 leading-relaxed italic mb-8">
-                  Saya percaya teknologi bukan hanya untuk cari untung, tapi untuk memecahkan masalah kepercayaan di masyarakat. <span className="text-white font-bold">$AMAL</span> adalah bukti nyata bahwa koding bisa membawa dampak sosial.
+                <h3 className="mt-5 text-lg font-bold text-gray-900">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-sm text-gray-600 leading-relaxed">
+                  {step.desc}
                 </p>
-                <span className="absolute -bottom-8 -right-2 text-6xl text-white/10 font-serif">”</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* TRANSPARENCY */}
+        <section className="mt-28 max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900">
+            Transparency You Can Verify
+          </h2>
+
+          <p className="mt-6 text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
+            Every donation is recorded on-chain. Users can verify campaign
+            progress, milestone approvals, and transaction receipts directly
+            through blockchain records.
+          </p>
+
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              "100% auditable fund flow",
+              "Immutable record (cannot be edited)",
+              "Trackable receipts & history",
+              "Funds never stored in personal accounts",
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-6 flex flex-col items-center text-center"
+              >
+                <CheckCircle2 className="w-7 h-7 text-emerald-600" />
+                <p className="mt-4 text-sm font-semibold text-gray-800">
+                  {item}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FEATURES */}
+        <section className="mt-28 max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center">
+            Platform Features
+          </h2>
+
+          <p className="mt-5 text-lg text-gray-600 text-center max-w-3xl mx-auto">
+            Built for donors, fundraisers, and admins with clear roles and
+            secure workflows.
+          </p>
+
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* DONOR */}
+            <div className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-sky-50 border border-sky-100">
+                  <Users className="w-6 h-6 text-sky-600" />
+                </div>
+                <h3 className="text-xl font-black text-gray-900">
+                  Donor Features
+                </h3>
               </div>
 
-              {/* Social Links */}
-              <div className="flex justify-center gap-4 mt-8">
-                 <Link href="#" className="p-3 bg-white/5 hover:bg-white/10 rounded-full text-white transition border border-white/5">
-                    <Github size={20} />
-                 </Link>
-                 <Link href="#" className="p-3 bg-white/5 hover:bg-white/10 rounded-full text-white transition border border-white/5">
-                    <Linkedin size={20} />
-                 </Link>
-                 <Link href="#" className="p-3 bg-white/5 hover:bg-white/10 rounded-full text-white transition border border-white/5">
-                    <Terminal size={20} />
-                 </Link>
+              <ul className="mt-6 space-y-3 text-gray-700 text-sm leading-relaxed">
+                {features.donor.map((f, i) => (
+                  <li key={i}>• {f}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* FUNDRAISER */}
+            <div className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100">
+                  <Heart className="w-6 h-6 text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-black text-gray-900">
+                  Fundraiser Features
+                </h3>
               </div>
-           </div>
-        </div>
 
-        {/* === 5. CTA SECTION === */}
-        <div className="text-center mt-32">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Siap menjadi bagian dari perubahan?</h2>
-          <Link 
-            href="/explore" 
-            className="inline-flex items-center gap-3 bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-green-700 transition shadow-xl shadow-green-200 hover:-translate-y-1"
-          >
-            <Heart size={20} fill="currentColor" /> Mulai Donasi Sekarang
-          </Link>
-        </div>
+              <ul className="mt-6 space-y-3 text-gray-700 text-sm leading-relaxed">
+                {features.fundraiser.map((f, i) => (
+                  <li key={i}>• {f}</li>
+                ))}
+              </ul>
+            </div>
 
+            {/* ADMIN */}
+            <div className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-rose-50 border border-rose-100">
+                  <ShieldCheck className="w-6 h-6 text-rose-600" />
+                </div>
+                <h3 className="text-xl font-black text-gray-900">
+                  Admin Features
+                </h3>
+              </div>
+
+              <ul className="mt-6 space-y-3 text-gray-700 text-sm leading-relaxed">
+                {features.admin.map((f, i) => (
+                  <li key={i}>• {f}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* TOKEN UTILITY */}
+        <section className="mt-28 max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900">
+            $AMAL Token Utility
+          </h2>
+
+          <p className="mt-6 text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
+            The <span className="font-semibold">$AMAL</span> token powers the
+            ecosystem and enables sustainable platform growth. Users may be
+            required to burn or stake $AMAL to create fundraising campaigns,
+            ensuring spam prevention and quality control.
+          </p>
+
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {[
+              {
+                title: "Campaign Creation",
+                desc: "Burn mechanism to prevent spam campaigns.",
+                icon: <Coins className="w-6 h-6" />,
+              },
+              {
+                title: "Staking",
+                desc: "Stake $AMAL for platform participation.",
+                icon: <Layers className="w-6 h-6" />,
+              },
+              {
+                title: "Governance Utility",
+                desc: "Supports future ecosystem governance.",
+                icon: <Cpu className="w-6 h-6" />,
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-7"
+              >
+                <div className="mx-auto w-fit p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600">
+                  {item.icon}
+                </div>
+                <h3 className="mt-5 text-lg font-black text-gray-900">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* TECH STACK */}
+        <section className="mt-28 max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center">
+            Technology Stack & Architecture
+          </h2>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { label: "Mobile App", value: "React Native (iOS & Android)" },
+              { label: "Admin Dashboard", value: "Next.js" },
+              { label: "Backend API", value: "ElysiaJS" },
+              { label: "Smart Contracts", value: "Solidity (EVM compatible)" },
+              { label: "Wallet & Auth", value: "Privy / Clerk (Embedded Wallet)" },
+              { label: "Token Standard", value: "ERC-20" },
+              { label: "Stablecoin", value: "USDC" },
+              { label: "Storage", value: "IPFS / Cloud Storage" },
+              { label: "Indexing", value: "Event Listener / The Graph" },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-6 flex items-start gap-4"
+              >
+                <div className="p-3 rounded-2xl bg-gray-50 border border-gray-100">
+                  <Terminal className="w-5 h-5 text-gray-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-semibold">
+                    {item.label}
+                  </p>
+                  <p className="text-base font-bold text-gray-900">
+                    {item.value}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* COMMITMENT */}
+        <section className="mt-28 max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900">
+            Our Commitment
+          </h2>
+
+          <p className="mt-6 text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
+            We are committed to building a fundraising platform that prioritizes
+            transparency, accountability, and fairness. Every smart contract
+            will be audited before deployment on mainnet to ensure maximum
+            security for donors and fundraisers.
+          </p>
+        </section>
+
+        {/* FAQ */}
+        <section className="mt-28 max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 text-center">
+            FAQ
+          </h2>
+
+          <div className="mt-12 space-y-4">
+            {faq.map((item, i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-gray-200 bg-white/80 backdrop-blur-sm shadow-md p-6"
+              >
+                <h3 className="font-bold text-gray-900 text-lg">{item.q}</h3>
+                <p className="mt-2 text-gray-600">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="mt-28 text-center max-w-4xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
+            Be Part of the Future of{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-lime-500">
+              Giving
+            </span>
+          </h2>
+
+          <p className="mt-6 text-lg text-gray-700 leading-relaxed">
+            Join <span className="font-semibold">$AMAL</span> today and experience
+            a new way of donating — transparent, secure, and borderless.
+          </p>
+
+          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/explore"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition"
+            >
+              Start Donating <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <Link
+              href="/create"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-sm text-gray-900 font-semibold hover:border-emerald-300 hover:text-emerald-700 transition"
+            >
+              Create Campaign
+            </Link>
+          </div>
+        </section>
       </main>
     </div>
   );

@@ -22,48 +22,48 @@ export default function ExplorePage() {
 
       <main className="relative z-10 pt-28 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
         
-        {/* === 1. HEADER BAR DARK MODE (Style "Meet the Developer") === */}
-        {/* Kita bungkus judul & search dalam box hitam rounded */}
-        <div className="bg-[#0F172A] rounded-[2.5rem] p-8 md:p-12 mb-12 text-white relative overflow-hidden shadow-2xl shadow-gray-200">
+        {/* === 1. HEADER BAR DARK MODE (Mobile Responsive Fix) === */}
+        <div className="bg-[#0F172A] rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-12 mb-8 md:mb-12 text-white relative overflow-hidden shadow-2xl shadow-gray-200">
            
-           {/* Hiasan Background (Abstrak) */}
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-500/10 rounded-full blur-[100px] pointer-events-none -mr-32 -mt-32"></div>
-           <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[80px] pointer-events-none -ml-20 -mb-20"></div>
+           {/* Hiasan Background - Kita kurangi opacity biar enteng di HP */}
+           <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-green-500/10 rounded-full blur-[80px] pointer-events-none -mr-32 -mt-32"></div>
+           <div className="absolute bottom-0 left-0 w-[200px] md:w-[300px] h-[200px] md:h-[300px] bg-blue-500/10 rounded-full blur-[60px] pointer-events-none -ml-20 -mb-20"></div>
 
-           <div className="relative z-10 flex flex-col lg:flex-row items-end justify-between gap-8">
+           <div className="relative z-10 flex flex-col lg:flex-row items-end justify-between gap-6 md:gap-8">
               
               {/* Bagian Teks Kiri */}
-              <div className="max-w-2xl">
-                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-green-400 text-xs font-bold uppercase tracking-wider mb-6 backdrop-blur-md">
+              <div className="w-full max-w-2xl">
+                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-green-400 text-xs font-bold uppercase tracking-wider mb-4 md:mb-6 backdrop-blur-md">
                    <Sparkles size={12} /> Discover Projects
                  </div>
-                 <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 leading-tight">
+                 <h1 className="text-3xl md:text-6xl font-black tracking-tight mb-2 md:mb-4 leading-tight">
                    Explore <br/>
                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">
                      Impactful Campaigns
                    </span>
                  </h1>
-                 <p className="text-gray-400 text-lg leading-relaxed max-w-lg">
+                 <p className="text-gray-400 text-sm md:text-lg leading-relaxed max-w-lg hidden md:block">
                    Temukan dan dukung proyek sosial terverifikasi. Transparansi data dijamin oleh teknologi Blockchain.
                  </p>
               </div>
 
-              {/* Bagian Search Bar Kanan */}
-              <div className="w-full lg:w-auto min-w-[350px]">
+              {/* Bagian Search Bar Kanan (FIXED: width full di mobile) */}
+              <div className="w-full lg:w-auto lg:min-w-[350px]">
                  <div className="relative group">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                        <Search className="text-gray-500 group-focus-within:text-green-400 transition" size={20} />
                     </div>
+                    {/* 👇 INI PERBAIKANNYA: Hapus min-w, ganti padding biar pas di HP */}
                     <input 
                        type="text" 
                        placeholder="Cari kampanye..." 
                        value={search}
                        onChange={(e) => setSearch(e.target.value)}
-                       className="w-full py-4 pl-12 pr-12 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-gray-500 focus:bg-white/10 focus:border-green-500/50 focus:outline-none focus:ring-4 focus:ring-green-500/10 transition-all font-medium backdrop-blur-sm"
+                       className="w-full py-3 md:py-4 pl-10 md:pl-12 pr-12 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl text-white placeholder:text-gray-500 focus:bg-white/10 focus:border-green-500/50 focus:outline-none focus:ring-4 focus:ring-green-500/10 transition-all font-medium backdrop-blur-sm text-sm md:text-base"
                     />
                     <div className="absolute inset-y-0 right-3 flex items-center">
-                      <button className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-gray-400 transition border border-white/5">
-                          <SlidersHorizontal size={18} />
+                      <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg md:rounded-xl text-gray-400 transition border border-white/5">
+                          <SlidersHorizontal size={16} />
                       </button>
                     </div>
                  </div>

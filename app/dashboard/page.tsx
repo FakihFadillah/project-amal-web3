@@ -27,35 +27,47 @@ export default function Dashboard() {
        
        <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none mt-[300px]"></div>
 
-      {/* HEADER DARK MODE */}
-      <div className="bg-[#0F172A] pt-32 pb-32 px-6 relative overflow-hidden rounded-b-[3rem] shadow-2xl">
-         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-green-500/10 rounded-full blur-[120px] pointer-events-none -mr-32 -mt-48"></div>
-         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none -ml-20 -mb-20"></div>
-
-         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-end gap-8 relative z-10">
-            <div>
+      {/* === 1. TOP COMMAND CENTER (DARK MODE) === */}
+      {/* Kurangi rounded bottom di HP biar ga terlalu melengkung aneh */}
+      <div className="bg-[#0F172A] pt-28 pb-24 md:pt-32 md:pb-32 px-4 md:px-6 relative overflow-hidden rounded-b-[2rem] md:rounded-b-[3rem] shadow-2xl">
+         
+         {/* Background Glow - Kurangi opacity untuk performa HP */}
+         <div className="absolute top-0 right-0 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-green-500/10 rounded-full blur-[80px] md:blur-[120px] pointer-events-none -mr-32 -mt-48"></div>
+         
+         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6 relative z-10">
+            <div className="w-full md:w-auto">
                <div className="flex items-center gap-2 mb-2">
                   <span className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-green-400 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
                      Fundraiser Dashboard
                   </span>
                </div>
-               <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">
+               <h1 className="text-3xl md:text-5xl font-black text-white mb-3 tracking-tight">
                   Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">Captain!</span> 👋
                </h1>
                
-               <div onClick={copyAddress} className="group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 pr-4 pl-2 py-2 rounded-full cursor-pointer transition-all w-fit backdrop-blur-sm">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg">
-                     {user?.wallet?.address?.slice(0, 2) || "0x"}
+               {/* Wallet Badge - Full width di HP biar rapi */}
+               <div 
+                 onClick={copyAddress}
+                 className="group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 pr-4 pl-2 py-2 rounded-full cursor-pointer transition-all w-full md:w-fit backdrop-blur-sm justify-between md:justify-start"
+               >
+                  <div className="flex items-center gap-3">
+                     <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg">
+                        {user?.wallet?.address?.slice(0, 2) || "0x"}
+                     </div>
+                     <span className="text-gray-300 font-mono text-sm group-hover:text-white transition">
+                        {user?.wallet?.address 
+                           ? `${user.wallet.address.slice(0, 6)}...${user.wallet.address.slice(-4)}`
+                           : "Wallet Not Connected"
+                        }
+                     </span>
                   </div>
-                  <span className="text-gray-300 font-mono text-sm group-hover:text-white transition">
-                     {user?.wallet?.address ? `${user.wallet.address.slice(0, 6)}...${user.wallet.address.slice(-4)}` : "Not Connected"}
-                  </span>
                   {copied ? <CheckCircle2 size={14} className="text-green-400"/> : <Copy size={14} className="text-gray-500 group-hover:text-white"/>}
                </div>
             </div>
 
-            <Link href="/create">
-               <button className="group relative px-8 py-4 bg-white text-[#0F172A] rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1 transition-all overflow-hidden flex items-center gap-3">
+            {/* Action Button - Full width di HP */}
+            <Link href="/create" className="w-full md:w-auto">
+               <button className="w-full group relative px-8 py-3 md:py-4 bg-white text-[#0F172A] rounded-xl md:rounded-2xl font-bold text-base md:text-lg shadow-xl hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1 transition-all overflow-hidden flex items-center justify-center gap-3">
                   <div className="absolute inset-0 bg-gradient-to-r from-green-200 via-white to-green-200 opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
                   <PlusCircle size={20} className="text-green-600 group-hover:rotate-90 transition-transform duration-300"/>
                   <span>Buat Kampanye</span>
